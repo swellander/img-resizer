@@ -2,47 +2,43 @@ import sys
 from PyQt5.QtWidgets import * 
 
 class TableWidget(QTableWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.setAcceptDrops(True)
-
-        self.setRowCount(4)
-        self.setColumnCount(2)
-        self.setItem(0,0, QTableWidgetItem("Cell (1,1)"))
-        self.setItem(0,1, QTableWidgetItem("Cell (1,2)"))
-        self.setItem(1,0, QTableWidgetItem("Cell (2,1)"))
-        self.setItem(1,1, QTableWidgetItem("Cell (2,2)"))
-        self.setItem(2,0, QTableWidgetItem("Cell (3,1)"))
-        self.setItem(2,1, QTableWidgetItem("Cell (3,2)"))
-        self.setItem(3,0, QTableWidgetItem("Cell (4,1)"))
-        self.setItem(3,1, QTableWidgetItem("Cell (4,2)"))
-        self.move(0,0)
+        self.setGeometry(20, 20, 600, 200)
+        self.setColumnCount(4)
+        self.setHorizontalHeaderLabels(["Filename", "Dimensions", "Size", "New Dimensions"])
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
+            print("Acceptable files")
             event.accept()
         else:
+            print(f'Ignoring file: {event}')
             event.ignore()
 
     def dropEvent(self, event):
+        print("DROPPED")
         files = [u.toLocalFile() for u in event.mimeData().urls()]
         for f in files:
             print(f)
 
+
+class SettingsWidget(QRadioButton):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
 class MainWidget(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.setAcceptDrops(True)
         self.setWindowTitle("BDA Resizer")
         self.resize(720, 480)
-        self.tableWidget = TableWidget()
-        self.setCentralWidget(self.tableWidget)
 
+        self.tableWidget = TableWidget(parent=self)
+        # self.settingsWidget = SettingsWidget(parent=self)
 
-    def _createList(self):
-        self.listWidget = QListWidget(self)
-        self.listWidget.addItem(QListWidgetItem("First Item"))
-        self.listWidget.addItem(QListWidgetItem("Second Item"))
-        self.listWidget.addItem(QListWidgetItem("Third Item"))
 
 
 def main():
